@@ -1,15 +1,7 @@
-print("Hi , IM Md.Ishraque Rezwan Auritro")
-print("Im a student of grade 6")
-print("My age is 12")
-print("Im a Boy")
-print("I study at Bangladesh International school & college")
-print("Im a good student")
-print("My family have 4 members")
-print("My Fathers Name is Md.Rezwan-Ur-Rouf , My mothers Name is Sharmin Alam Shathi & my little brothers name is Md.Sandman Rezwan Ohi")
-print("My hobby is coding")
-print("Coding is my favourite work")
-print("I recently completed a course on web-development at codingal")
-print("Now im learning python")
-print("This is my first ACP on python")
-print("Here i wrote about my identitiy")
-print("Im done writing about myself . So , Bye")
+import math
+
+num = float(input("Enter a number: "))
+
+result = math.sqrt(num)
+
+print("Square root is:", result)
