@@ -1,7 +1,11 @@
-import math
+actual_cost = float(input("Enter the actual product price: "))
+sale_amount = float(input("Enter the selling price: "))
 
-num = float(input("Enter a number: "))
+difference = sale_amount - actual_cost
 
-result = math.sqrt(num)
-
-print("Square root is:", result)
+if difference > 0:
+    print("You made a Profit of:", difference)
+elif difference < 0:
+    print("You made a Loss of:", abs(difference))
+else:
+    print("No Profit, No Loss!")
