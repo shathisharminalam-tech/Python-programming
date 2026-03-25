@@ -1,11 +1,6 @@
-actual_cost = float(input("Enter the actual product price: "))
-sale_amount = float(input("Enter the selling price: "))
+ch = input("Enter a character: ")
 
-difference = sale_amount - actual_cost
-
-if difference > 0:
-    print("You made a Profit of:", difference)
-elif difference < 0:
-    print("You made a Loss of:", abs(difference))
+if ('a' <= ch <= 'z') or ('A' <= ch <= 'Z'):
+    print("Alphabet")
 else:
-    print("No Profit, No Loss!")
+    print("Not alphabet")
