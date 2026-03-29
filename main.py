@@ -1,6 +1,11 @@
-ch = input("Enter a character: ")
+age = int(input("Enter your age: "))
 
-if ('a' <= ch <= 'z') or ('A' <= ch <= 'Z'):
-    print("Alphabet")
-else:
-    print("Not alphabet")
+for i in range(1):
+    if age >= 10:
+        if age <= 20:
+            print("Your age is between 10 and 20 ✅")
+        else:
+            print("Your age is above 20 ❌")
+    else:
+        print("Your age is below 10 ❌")
+        
