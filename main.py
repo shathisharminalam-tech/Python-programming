@@ -1,4 +1,9 @@
-num = int(input("Enter number: "))
-power = int(input("Enter power: "))
+import turtle
 
-print(num ** power)
+t = turtle.Turtle()
+
+for i in range(4):
+    t.forward(100)
+    t.right(90)
+
+turtle.done()
