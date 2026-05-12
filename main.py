@@ -1,10 +1,19 @@
-import calendar
-import datetime
+start = int(input("Enter starting number: "))
+end = int(input("Enter ending number: "))
 
-# Get current year
-year = datetime.datetime.now().year
+squares = []
+even = []
+odd = []
 
-print("Months of the year:", year)
-print()
-for month in range(1, 13):
-    print(calendar.month_name[month])
+for i in range(start, end + 1):
+    square = i ** 2
+    squares.append(square)
+
+    if square % 2 == 0:
+        even.append(square)
+    else:
+        odd.append(square)
+
+print("Square values:", squares)
+print("Even squares:", even)
+print("Odd squares:", odd)
