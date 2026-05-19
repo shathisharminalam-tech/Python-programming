@@ -1,19 +1,11 @@
-start = int(input("Enter starting number: "))
-end = int(input("Enter ending number: "))
+d = {'a': 1, 'b': 2, 'c': 1, 'd': 3, 'e': 2}
 
-squares = []
-even = []
-odd = []
+freq = {}
 
-for i in range(start, end + 1):
-    square = i ** 2
-    squares.append(square)
-
-    if square % 2 == 0:
-        even.append(square)
+for value in d.values():
+    if value in freq:
+        freq[value] += 1
     else:
-        odd.append(square)
+        freq[value] = 1
 
-print("Square values:", squares)
-print("Even squares:", even)
-print("Odd squares:", odd)
+print(freq)
