@@ -1,36 +1,33 @@
-class Book:
-    def __init__(self, title, author):
-        self.title = title
-        self.author = author
-        self.is_borrowed = False
+import tkinter as tk
+from tkinter import messagebox
 
-    def borrow(self):
-        if not self.is_borrowed:
-            self.is_borrowed = True
-            print(f"Success: You have borrowed '{self.title}' by {self.author}.")
-        else:
-            print(f"Sorry: '{self.title}' is already borrowed.")
+def calculate_product():
+    try:
+        num1 = float(entry_num1.get())
+        num2 = float(entry_num2.get())
+        product = num1 * num2
+        label_result.config(text=f"Product: {product}")
+    except ValueError:
+        messagebox.showerror("Invalid Input", "Please enter valid numeric values.")
 
-    def return_book(self):
-        if self.is_borrowed:
-            self.is_borrowed = False
-            print(f"Success: '{self.title}' has been successfully returned.")
-        else:
-            print(f"Notice: '{self.title}' was not checked out.")
+root = tk.Tk()
+root.title("Here's the product")
+root.geometry("300x200")
 
+label_num1 = tk.Label(root, text="Enter First Number:")
+label_num1.pack(pady=5)
+entry_num1 = tk.Entry(root)
+entry_num1.pack(pady=5)
 
-book1 = Book("The Hobbit", "J.R.R. Tolkien")
-book2 = Book("1984", "George Orwell")
-book3 = Book("To Kill a Mockingbird", "Harper Lee")
+label_num2 = tk.Label(root, text="Enter Second Number:")
+label_num2.pack(pady=5)
+entry_num2 = tk.Entry(root)
+entry_num2.pack(pady=5)
 
-print("--- Library System Test ---")
+btn_calculate = tk.Button(root, text="Calculate Product", command=calculate_product)
+btn_calculate.pack(pady=10)
 
-book1.borrow()
-book1.borrow()
+label_result = tk.Label(root, text="Product: ", font=("Arial", 12, "bold"))
+label_result.pack(pady=5)
 
-print("\n--- Testing Book 2 ---")
-book2.borrow()
-book2.return_book()
-
-print("\n--- Testing Book 3 ---")
-book3.return_book()
+root.mainloop()
