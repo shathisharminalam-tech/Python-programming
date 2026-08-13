@@ -1,0 +1,82 @@
+﻿@import url('https://fonts.cdnfonts.com/css/broadway');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .font-broadway {
+            font-family: 'Broadway', sans-serif;
+        }
+
+        .receipt-underline {
+            border-bottom: 1px dashed #64748b;
+            display: inline-block;
+            padding-bottom: 1px;
+        }
+
+        /* Smooth UI transitions */
+        .interactive-element {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+
+            body * {
+                visibility: hidden;
+            }
+
+            #print-area-wrapper,
+            #print-area-wrapper * {
+                visibility: visible;
+            }
+
+            #print-area-wrapper {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 210mm;
+                height: 297mm;
+                padding: 10mm !important;
+                background: white !important;
+            }
+
+            body.modal-printing #print-area-wrapper {
+                visibility: hidden !important;
+            }
+
+            body.modal-printing #viewModal,
+            body.modal-printing #modalPrintCaptureArea,
+            body.modal-printing #modalPrintCaptureArea * {
+                visibility: visible !important;
+            }
+
+            body.modal-printing #viewModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 210mm;
+                height: 297mm;
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            body.modal-printing #modalPrintCaptureArea {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+
+            .no-print,
+            #viewModal .no-print-btn {
+                display: none !important;
+            }
+
+            .receipt-box {
+                border: 1px solid #cbd5e1 !important;
+            }
+        }
