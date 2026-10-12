@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en" class="dark.h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Plant</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #05070a;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .glass-card {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #06090e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #1b2433;
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #10b981;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+            transition: transform 0.15s ease;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        input[type=range]:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        input[type=range]:disabled::-webkit-slider-thumb {
+            background: #64748b;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen bg-[#05070a] text-slate-100 flex flex-col justify-between selection:bg-emerald-500 selection:text-slate-950">
+
+    <header class="border-b border-slate-800/80 bg-[#080c14]/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-700 flex items-center justify-center shadow-lg shadow-emerald-950/60">
+                    <i class="fa-solid fa-seedling text-slate-950 text-xl font-bold"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-tight text-white flex items-center gap-2">
+                        Smart Plant
+                    </h1>
+                    <p class="text-[11px] text-slate-400 font-mono">BOTANICAL SIMULATION</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div
+                    class="bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-1.5 flex items-center space-x-2.5 font-mono text-xs">
+                    <i class="fa-solid fa-calendar-day text-amber-400"></i>
+                    <span class="text-slate-400">AGE:</span>
+                    <span id="day-counter-display" class="text-amber-400 font-bold text-sm">1.0</span>
+                    <span class="text-slate-500">/ 100 DAYS</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 w-full">
+
+        <!-- LEFT COLUMN: CANVAS & CAMERA/TIMELINE CONTROLS -->
+        <section class="lg:col-span-7 flex flex-col space-y-4">
+
+            <div class="glass-card rounded-2xl p-4 relative overflow-hidden flex flex-col border border-slate-800/80"
+                id="canvas-container">
+
+                <div class="flex items-center justify-between pb-3 mb-2 border-b border-slate-800/80">
+                    <div class="flex items-center space-x-2">
+                        <span id="growth-status-dot"
+                            class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">Growth
+                            View</span>
+                    </div>
+
+                    <!-- Camera Navigation Suite -->
+                    <div class="flex items-center space-x-2 font-mono text-xs">
+                        <button onclick="adjustZoom(0.1)"
+                            class="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
+                            title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+                        <button onclick="resetCamera()"
+                            class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
+                            title="Reset View">Fit View</button>
+                        <button onclick="adjustZoom(-0.1)"
+                            class="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
+                            title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+                    </div>
+                </div>
+
+                <!-- Canvas Viewport with Death Overlay -->
+                <div
+                    class="relative w-full h-[520px] rounded-xl bg-[#030508] overflow-hidden flex items-center justify-center border border-slate-900 shadow-inner">
+                    <canvas id="plant-canvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+
+                    <div
+                        class="absolute top-4 left-4 bg-slate-900/85 border border-slate-800/80 backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-mono flex items-center space-x-2 text-slate-300 shadow-lg">
+                        <i id="sun-moon-icon" class="fa-solid fa-sun text-amber-400"></i>
+                        <span id="time-cycle-text">12:00 PM (Sunlight)</span>
+                    </div>
+
+                    <!-- Deceased Restart Overlay -->
+                    <div id="death-overlay"
+                        class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20 transition-opacity duration-700">
+                        <div
+                            class="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mb-4 text-rose-500 text-2xl animate-bounce">
+                            <i class="fa-solid fa-skull"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white font-mono tracking-tight mb-2">PLANT DECEASED</h3>
+                        <p class="text-xs text-rose-300 font-mono mb-1" id="death-cause-text">Cause: Severe Dehydration
+                            &amp; Stress</p>
+                        <p class="text-xs text-slate-400 max-w-sm mb-6 leading-relaxed">
+                            Continuous exposure to adverse environmental conditions has caused permanent cellular
+                            collapse.
+                        </p>
+                        <button onclick="revivePlant()"
+                            class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-extrabold font-mono text-xs uppercase tracking-wider hover:brightness-110 transition shadow-lg shadow-emerald-950/80 flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-left"></i> Revive / Restart Simulation
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Timeline Controls -->
+                <div
+                    class="mt-4 p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+                    <div class="flex items-center space-x-2">
+                        <button id="btn-play-pause" onclick="togglePlayPause()"
+                            class="w-8 h-8 rounded-lg bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 transition flex items-center justify-center">
+                            <i class="fa-solid fa-pause" id="icon-play-pause"></i>
+                        </button>
+                        <button onclick="stepDay(1)"
+                            class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">+1
+                            Day</button>
+                        <button onclick="stepDay(7)"
+                            class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">+7
+                            Days</button>
+                    </div>
+
+                    <div class="flex-1 min-w-[180px] flex items-center space-x-2">
+                        <span class="text-slate-500 text-[10px]">Day 1</span>
+                        <input type="range" id="timeline-slider" min="1" max="100" step="0.1" value="1" class="w-full"
+                            oninput="jumpToDay(parseFloat(this.value))">
+                        <span class="text-slate-500 text-[10px]">Day 100</span>
+                    </div>
+
+                    <div class="flex items-center space-x-1">
+                        <span class="text-slate-400 text-[11px] mr-1">Speed:</span>
+                        <button onclick="setSimSpeed(1, this)"
+                            class="speed-btn px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">1x</button>
+                        <button onclick="setSimSpeed(2, this)"
+                            class="speed-btn px-2 py-1 rounded text-slate-400 hover:text-white">2x</button>
+                        <button onclick="setSimSpeed(5, this)"
+                            class="speed-btn px-2 py-1 rounded text-slate-400 hover:text-white">5x</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- RIGHT COLUMN: ENVIRONMENTAL CONTROLS -->
+        <section class="lg:col-span-5 flex flex-col space-y-4">
+
+            <div
+                class="glass-card rounded-2xl p-6 border border-slate-800/80 flex-grow flex flex-col justify-between space-y-6">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2
+                            class="text-sm font-bold text-white uppercase font-mono tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-emerald-400"></i> Environmental Controls
+                        </h2>
+                        <button onclick="resetEnvironment()"
+                            class="text-[11px] text-slate-400 hover:text-emerald-400 font-mono underline transition">Reset
+                            Optimal</button>
+                    </div>
+
+                    <div class="space-y-5 mt-2">
+                        <!-- Control 1: Soil Moisture (Always Active) -->
+                        <div id="wrapper-moisture">
+                            <div class="flex justify-between text-xs mb-2 font-mono">
+                                <span class="text-slate-300"><i class="fa-solid fa-droplet text-cyan-400 mr-2"></i>Soil
+                                    Moisture</span>
+                                <span id="val-moisture" class="text-cyan-400 font-bold">65%</span>
+                            </div>
+                            <input type="range" id="input-moisture" min="0" max="100" value="65" class="w-full"
+                                oninput="updateEnvState()">
+                            <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1.5">
+                                <span>0% (Drought)</span>
+                                <span>60-70% (Ideal)</span>
+                                <span>100% (Soggy)</span>
+                            </div>
+                        </div>
+
+                        <!-- Control 2: Sunlight Intensity -->
+                        <div id="wrapper-light" class="transition-all duration-500">
+                            <div class="flex justify-between text-xs mb-2 font-mono">
+                                <span class="text-slate-300 flex items-center">
+                                    <i class="fa-solid fa-sun text-amber-400 mr-2"></i>Sunlight Intensity
+                                </span>
+                                <span id="val-light" class="text-amber-400 font-bold">80%</span>
+                            </div>
+                            <input type="range" id="input-light" min="0" max="100" value="80" class="w-full"
+                                oninput="updateEnvState()">
+                            <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1.5">
+                                <span>Darkness</span>
+                                <span>Indirect Light</span>
+                                <span>Scorching</span>
+                            </div>
+                        </div>
+
+                        <!-- Control 3: Ambient Temp -->
+                        <div id="wrapper-temp" class="transition-all duration-500">
+                            <div class="flex justify-between text-xs mb-2 font-mono">
+                                <span class="text-slate-300 flex items-center">
+                                    <i class="fa-solid fa-temperature-half text-rose-400 mr-2"></i>Ambient Temp
+                                </span>
+                                <span id="val-temp" class="text-rose-400 font-bold">24°C</span>
+                            </div>
+                            <input type="range" id="input-temp" min="0" max="50" value="24" class="w-full"
+                                oninput="updateEnvState()">
+                            <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1.5">
+                                <span>0°C (Freezing)</span>
+                                <span>22-26°C (Ideal)</span>
+                                <span>50°C (Extreme)</span>
+                            </div>
+                        </div>
+
+                        <!-- Control 4: Soil pH -->
+                        <div id="wrapper-ph" class="transition-all duration-500">
+                            <div class="flex justify-between text-xs mb-2 font-mono">
+                                <span class="text-slate-300 flex items-center">
+                                    <i class="fa-solid fa-flask text-purple-400 mr-2"></i>Soil pH
+                                </span>
+                                <span id="val-ph" class="text-purple-400 font-bold">6.5 pH</span>
+                            </div>
+                            <input type="range" id="input-ph" min="3.0" max="10.0" step="0.1" value="6.5" class="w-full"
+                                oninput="updateEnvState()">
+                            <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1.5">
+                                <span>3.0 (Acidic)</span>
+                                <span>6.0-6.8 (Ideal)</span>
+                                <span>10.0 (Alkaline)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block mb-3">Quick
+                        Boosters</span>
+                    <div class="grid grid-cols-4 gap-2.5">
+                        <button onclick="actionWater()"
+                            class="p-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-xs font-mono transition flex flex-col items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-faucet-drip text-sm"></i>
+                            <span>Water</span>
+                        </button>
+                        <button onclick="actionSun()" id="btn-booster-sun"
+                            class="p-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-mono transition flex flex-col items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-sun text-sm"></i>
+                            <span>Sun Boost</span>
+                        </button>
+                        <button type="button" onclick="actionMist()"
+                            class="p-2.5 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-400 text-xs font-mono transition flex flex-col items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-spray-can text-sm"></i>
+                            <span>Mist</span>
+                        </button>
+                        <button onclick="actionCalibratePH()" id="btn-booster-ph"
+                            class="p-2.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-mono transition flex flex-col items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                            <span>Fix pH</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        const plantSpec = {
+            optimalMoisture: 65,
+            optimalLight: 80,
+            optimalTemp: 24,
+            optimalPH: 6.5
+        };
+
+        const state = {
+            day: 1.0,
+            isPlaying: true,
+            isDead: false,
+            isDying: false,
+            deathProgress: 0,
+            deathDuration: 2.5,
+            simSpeed: 1,
+            zoom: 1.0,
+            panX: 0,
+            panY: 0,
+            isDragging: false,
+            lastMouseX: 0,
+            lastMouseY: 0,
+
+            moisture: 65,
+            light: 80,
+            temp: 24,
+            ph: 6.5,
+
+            health: 98,
+            hourOfDay: 12,
+            deathCause: "",
+            fallingLeaves: []
+        };
+
+        const canvas = document.getElementById('plant-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function lerp(start, end, amt) {
+            return (1 - amt) * start + amt * end;
+        }
+
+        function smoothstep(min, max, value) {
+            const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
+            return x * x * (3 - 2 * x);
+        }
+
+        function interpolateColor(color1, color2, factor) {
+            const result = color1.slice();
+            for (let i = 0; i < 3; i++) {
+                result[i] = Math.round(result[i] + factor * (color2[i] - result[i]));
+            }
+            return `rgb(${result[0]}, ${result[1]}, ${result[2]})`;
+        }
+
+        // Camera Pan & Zoom Listeners
+        canvas.addEventListener('mousedown', (e) => {
+            state.isDragging = true;
+            state.lastMouseX = e.clientX;
+            state.lastMouseY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (state.isDragging) {
+                const dx = e.clientX - state.lastMouseX;
+                const dy = e.clientY - state.lastMouseY;
+                state.panX += dx;
+                state.panY += dy;
+                state.lastMouseX = e.clientX;
+                state.lastMouseY = e.clientY;
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            state.isDragging = false;
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomDelta = e.deltaY < 0 ? 0.08 : -0.08;
+            adjustZoom(zoomDelta);
+        }, { passive: false });
+
+        let animFrame = 0;
+        let lastTimestamp = performance.now();
+
+        function simulationLoop(currentTimestamp) {
+            animFrame++;
+            const deltaTime = (currentTimestamp - lastTimestamp) / 1000;
+            lastTimestamp = currentTimestamp;
+
+            // Smooth death sequence animation over 2.5s
+            if (state.isDying) {
+                state.deathProgress += deltaTime / state.deathDuration;
+
+                if (Math.random() < 0.35 && state.fallingLeaves.length < 24) {
+                    state.fallingLeaves.push({
+                        x: (Math.random() - 0.5) * 160,
+                        y: -150 - Math.random() * 200,
+                        vx: (Math.random() - 0.5) * 1.5,
+                        vy: 1.2 + Math.random() * 1.8,
+                        size: 3 + Math.random() * 5,
+                        rot: Math.random() * Math.PI * 2,
+                        vRot: (Math.random() - 0.5) * 0.1,
+                        opacity: 1.0
+                    });
+                }
+
+                if (state.deathProgress >= 1.0) {
+                    state.deathProgress = 1.0;
+                    state.isDying = false;
+                    state.isDead = true;
+                    completeDeathSequence();
+                }
+            }
+
+            // Drifting withered leaf particle updates
+            for (let i = state.fallingLeaves.length - 1; i >= 0; i--) {
+                const leaf = state.fallingLeaves[i];
+                leaf.x += leaf.vx + Math.sin(animFrame * 0.05 + i) * 0.5;
+                leaf.y += leaf.vy;
+                leaf.rot += leaf.vRot;
+                leaf.opacity -= 0.004;
+                if (leaf.y > 0 || leaf.opacity <= 0) {
+                    state.fallingLeaves.splice(i, 1);
+                }
+            }
+
+            if (state.isPlaying && !state.isDead && !state.isDying && deltaTime > 0 && deltaTime < 1) {
+                const daysPassed = deltaTime * state.simSpeed;
+                state.day += daysPassed;
+
+                if (state.day > 100) state.day = 1.0;
+
+                state.hourOfDay = (state.hourOfDay + daysPassed * 24) % 24;
+
+                document.getElementById('day-counter-display').textContent = state.day.toFixed(1);
+                document.getElementById('timeline-slider').value = state.day;
+
+                // Update environmental slider availability as plant matures
+                updateProgressiveControls();
+
+                if (animFrame % 10 === 0) {
+                    evaluateHealthAndConditions();
+                }
+            }
+
+            renderCanvas();
+            requestAnimationFrame(simulationLoop);
+        }
+
+        // Environmental controls remain available for the full simulation.
+        // The day counter should not auto-lock any of the sliders or action buttons.
+        function updateProgressiveControls() {
+            const phWrapper = document.getElementById('wrapper-ph');
+            const tempWrapper = document.getElementById('wrapper-temp');
+            const lightWrapper = document.getElementById('wrapper-light');
+
+            const phInput = document.getElementById('input-ph');
+            const tempInput = document.getElementById('input-temp');
+            const lightInput = document.getElementById('input-light');
+
+            const btnPh = document.getElementById('btn-booster-ph');
+            const btnSun = document.getElementById('btn-booster-sun');
+
+            phInput.disabled = false;
+            tempInput.disabled = false;
+            lightInput.disabled = false;
+
+            phWrapper.style.opacity = '1.0';
+            tempWrapper.style.opacity = '1.0';
+            lightWrapper.style.opacity = '1.0';
+
+            btnPh.disabled = false;
+            btnSun.disabled = false;
+            btnPh.style.opacity = '1.0';
+            btnSun.style.opacity = '1.0';
+        }
+
+        function evaluateHealthAndConditions() {
+            if (state.isDead || state.isDying) return;
+
+            const moistDiff = Math.abs(state.moisture - plantSpec.optimalMoisture);
+            const lightDiff = Math.abs(state.light - plantSpec.optimalLight);
+            const tempDiff = Math.abs(state.temp - plantSpec.optimalTemp);
+            const phDiff = Math.abs(state.ph - plantSpec.optimalPH) * 10;
+
+            let primaryStress = "";
+            if (state.moisture < 15) primaryStress = "Severe Dehydration / Drought";
+            else if (state.moisture > 90) primaryStress = "Root Rot & Waterlogging";
+            else if (state.temp > 42) primaryStress = "Extreme Thermal Damage";
+            else if (state.temp < 5) primaryStress = "Frost & Freezing Shock";
+            else if (state.ph < 4.0 || state.ph > 9.0) primaryStress = "Nutrient Toxicity & Soil Toxicity";
+            else if (state.light < 10) primaryStress = "Darkness & Light Starvation";
+
+            const totalStress = (moistDiff * 0.95 + lightDiff * 0.6 + tempDiff * 1.4 + phDiff * 2.2);
+            state.health = Math.max(0, Math.min(100, Math.round(100 - totalStress * 0.65)));
+
+            if (state.health <= 0) {
+                triggerDeathAnimation(primaryStress || "Multiple Environmental Extremes");
+            }
+        }
+
+        function triggerDeathAnimation(cause) {
+            if (state.isDying || state.isDead) return;
+            state.isDying = true;
+            state.deathProgress = 0.0;
+            state.health = 0;
+            state.deathCause = cause;
+
+            document.getElementById('growth-status-dot').className = 'w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping';
+        }
+
+        function completeDeathSequence() {
+            document.getElementById('death-cause-text').textContent = `Cause: ${state.deathCause}`;
+            document.getElementById('death-overlay').classList.remove('hidden');
+            document.getElementById('growth-status-dot').className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+        }
+
+        function revivePlant() {
+            state.isDead = false;
+            state.isDying = false;
+            state.deathProgress = 0;
+            state.fallingLeaves = [];
+            state.day = 1.0;
+            document.getElementById('death-overlay').classList.add('hidden');
+            document.getElementById('growth-status-dot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+
+            resetEnvironment();
+            jumpToDay(1.0);
+        }
+
+        function renderCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const isDay = state.hourOfDay >= 6 && state.hourOfDay <= 18;
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+
+            if (isDay) {
+                skyGrad.addColorStop(0, '#09121f');
+                skyGrad.addColorStop(1, '#030508');
+                document.getElementById('sun-moon-icon').className = 'fa-solid fa-sun text-amber-400';
+                document.getElementById('time-cycle-text').textContent = `${Math.floor(state.hourOfDay)}:00 ${state.hourOfDay >= 12 ? 'PM' : 'AM'} (Sunlight)`;
+            } else {
+                skyGrad.addColorStop(0, '#020408');
+                skyGrad.addColorStop(1, '#010204');
+                document.getElementById('sun-moon-icon').className = 'fa-solid fa-moon text-indigo-400';
+                document.getElementById('time-cycle-text').textContent = `${Math.floor(state.hourOfDay)}:00 ${state.hourOfDay >= 12 ? 'PM' : 'AM'} (Moonlight)`;
+            }
+
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+
+            let stemH = 0;
+            if (state.day <= 3) {
+                stemH = lerp(18, 72, (state.day - 1) / 2);
+            } else if (state.day <= 15) {
+                stemH = lerp(72, 303.75, (state.day - 3) / 12);
+            } else {
+                stemH = lerp(303.75, 742.5, (state.day - 15) / 85);
+            }
+
+            const potHeight = 160;
+            const potBottomPadding = 25;
+            const potBaseY = canvas.height - potBottomPadding - state.panY;
+            const centerX = canvas.width / 2 + state.panX;
+
+            const availableHeight = canvas.height - potBottomPadding - 60;
+            const totalVisualHeight = stemH + potHeight + 140;
+
+            let autoScale = availableHeight / totalVisualHeight;
+            autoScale = Math.min(0.95, Math.max(0.38, autoScale));
+
+            ctx.translate(centerX, potBaseY - potHeight * autoScale);
+
+            const cameraScale = state.zoom * autoScale;
+            ctx.scale(cameraScale, cameraScale);
+
+            drawPotAndSoil();
+            drawPlantContinuous(state.day, stemH);
+            drawFallingLeaves();
+
+            ctx.restore();
+        }
+
+        function drawPotAndSoil() {
+            const potW = 280;
+            const potH = 160;
+
+            ctx.beginPath();
+            ctx.ellipse(0, potH + 10, potW * 0.60, 24, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+            ctx.fill();
+
+            const potGrad = ctx.createLinearGradient(-potW / 2, 0, potW / 2, potH);
+            potGrad.addColorStop(0, '#1e293b');
+            potGrad.addColorStop(0.3, '#334155');
+            potGrad.addColorStop(0.7, '#1e293b');
+            potGrad.addColorStop(1, '#0f172a');
+
+            ctx.beginPath();
+            ctx.moveTo(-potW / 2, 0);
+            ctx.lineTo(potW / 2, 0);
+            ctx.lineTo(potW * 0.38, potH);
+            ctx.lineTo(-potW * 0.38, potH);
+            ctx.closePath();
+
+            ctx.fillStyle = potGrad;
+            ctx.fill();
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+
+            const rimGrad = ctx.createLinearGradient(-potW / 2 - 12, 0, potW / 2 + 12, 0);
+            rimGrad.addColorStop(0, '#334155');
+            rimGrad.addColorStop(0.5, '#64748b');
+            rimGrad.addColorStop(1, '#1e293b');
+
+            ctx.beginPath();
+            ctx.roundRect(-potW / 2 - 12, -22, potW + 24, 26, 7);
+            ctx.fillStyle = rimGrad;
+            ctx.fill();
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2.0;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.ellipse(0, -3.0, potW / 2 + 3.0, 18, 0, 0, Math.PI * 2);
+            ctx.fillStyle = (state.isDead || state.isDying) ? '#1c1917' : '#221714';
+            ctx.fill();
+
+            ctx.fillStyle = '#64748b';
+            for (let i = -110; i <= 110; i += 28) {
+                ctx.beginPath();
+                ctx.arc(i + Math.sin(i) * 7, -3.0 + Math.cos(i) * 5.0, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawPlantContinuous(day, stemH) {
+            let decayFactor = 0;
+            if (state.isDead) {
+                decayFactor = 1.0;
+            } else if (state.isDying) {
+                decayFactor = state.deathProgress;
+            }
+
+            const droop = lerp((100 - state.health) * 0.18, 48.0, decayFactor);
+            const sway = (state.isDead || state.isDying) ? 0 : Math.sin(animFrame * 0.03) * 6.75;
+
+            let stemThickness = 0;
+            if (day <= 3) {
+                stemThickness = lerp(7.875, 10.125, (day - 1) / 2);
+            } else if (day <= 15) {
+                stemThickness = lerp(10.125, 21.375, (day - 3) / 12);
+            } else {
+                stemThickness = lerp(21.375, 42.0, (day - 15) / 85);
+            }
+
+            ctx.beginPath();
+            ctx.ellipse(0, -3.0, 18.0 + stemThickness * 0.5, 9.0, 0, 0, Math.PI * 2);
+            ctx.fillStyle = interpolateColor([58, 37, 30], [28, 25, 23], decayFactor);
+            ctx.fill();
+
+            const stemGrad = ctx.createLinearGradient(0, 0, 0, -stemH);
+            if (decayFactor > 0) {
+                const startC = interpolateColor([69, 26, 3], [41, 37, 36], decayFactor);
+                const midC = interpolateColor([120, 53, 15], [68, 64, 60], decayFactor);
+                const endC = interpolateColor([34, 197, 94], [28, 25, 23], decayFactor);
+                stemGrad.addColorStop(0, startC);
+                stemGrad.addColorStop(0.5, midC);
+                stemGrad.addColorStop(1, endC);
+            } else if (day <= 3) {
+                stemGrad.addColorStop(0, '#86efac');
+                stemGrad.addColorStop(1, '#4ade80');
+            } else if (day <= 15) {
+                const woodRatio = Math.min(1.0, (day - 3) / 12);
+                stemGrad.addColorStop(0, '#582f0e');
+                stemGrad.addColorStop(woodRatio * 0.5, '#78350f');
+                stemGrad.addColorStop(1, '#15803d');
+            } else {
+                stemGrad.addColorStop(0, '#451a03');
+                stemGrad.addColorStop(0.4, '#78350f');
+                stemGrad.addColorStop(0.85, '#15803d');
+                stemGrad.addColorStop(1, '#22c55e');
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(0, -3.0);
+            ctx.quadraticCurveTo(sway * 0.5, -stemH * 0.5, sway, -stemH);
+            ctx.strokeStyle = stemGrad;
+            ctx.lineWidth = stemThickness;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            if (day > 2) {
+                const maxLeaves = 2 + (day - 2) * 0.13;
+                const totalLeafSlots = Math.floor(maxLeaves);
+
+                for (let i = 0; i <= totalLeafSlots; i++) {
+                    const leafBirthDay = 2.0 + i * 7.0;
+                    if (day < leafBirthDay) continue;
+
+                    const leafAge = day - leafBirthDay;
+                    const unfurlProgress = smoothstep(0, 4, leafAge);
+                    const leafOpacity = Math.min(1.0, leafAge / 1.5);
+
+                    const nodeRatio = 0.20 + (i / Math.max(1, maxLeaves)) * 0.76;
+                    const nodeY = -stemH * nodeRatio;
+                    const side = i % 2 === 0 ? 1 : -1;
+
+                    const maxLen = 75.0 + Math.min(1.0, leafAge / 25) * 130.0;
+                    const len = maxLen * unfurlProgress;
+
+                    if (len < 3.0) continue;
+
+                    ctx.save();
+                    ctx.translate(sway * nodeRatio, nodeY);
+
+                    const baseAngle = 0.75 - unfurlProgress * 0.2 + droop * 0.035;
+                    ctx.rotate(side * baseAngle);
+
+                    drawSingleLeaf(side, len, unfurlProgress, leafOpacity, decayFactor);
+
+                    ctx.restore();
+                }
+            }
+        }
+
+        function drawSingleLeaf(side, len, unfurlProgress, opacity, decayFactor) {
+            ctx.globalAlpha = opacity;
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+
+            const widthScale = 1.0 - decayFactor * 0.35;
+            const w1 = len * 0.35 * unfurlProgress * widthScale;
+            const w2 = len * 0.52 * unfurlProgress * widthScale;
+
+            ctx.bezierCurveTo(side * w1, -len * 0.25, side * w2 * 1.2, -len * 0.12, side * len * 0.95, len * (0.15 + decayFactor * 0.35));
+            ctx.bezierCurveTo(side * w2 * 1.1, len * 0.55, side * w1 * 0.8, len * 0.4, 0, 0);
+
+            let colorBase, colorMid, colorTip;
+            if (decayFactor > 0) {
+                colorBase = interpolateColor([20, 83, 45], [41, 37, 36], decayFactor);
+                colorMid = interpolateColor([22, 163, 74], [68, 64, 60], decayFactor);
+                colorTip = interpolateColor([34, 197, 94], [87, 83, 78], decayFactor);
+            } else if (state.health > 80) {
+                colorBase = '#14532d'; colorMid = '#16a34a'; colorTip = '#22c55e';
+            } else if (state.health > 40) {
+                colorBase = '#15803d'; colorMid = '#ca8a04'; colorTip = '#eab308';
+            } else {
+                colorBase = '#78350f'; colorMid = '#a16207'; colorTip = '#854d0e';
+            }
+
+            const leafGrad = ctx.createLinearGradient(0, 0, side * len, 0);
+            leafGrad.addColorStop(0, colorBase);
+            leafGrad.addColorStop(0.65, colorMid);
+            leafGrad.addColorStop(1, colorTip);
+
+            ctx.fillStyle = leafGrad;
+            ctx.fill();
+
+            if (decayFactor < 1.0 && unfurlProgress > 0.4) {
+                ctx.beginPath();
+                ctx.bezierCurveTo(side * len * 0.2, -len * 0.1, side * len * 0.55, -len * 0.04, side * len * 0.75, len * 0.05);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.16 * unfurlProgress * (1 - decayFactor)})`;
+                ctx.lineWidth = Math.max(2.0, len * 0.03);
+                ctx.stroke();
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(side * len * 0.92, len * (0.12 + decayFactor * 0.3));
+            ctx.strokeStyle = interpolateColor([134, 239, 172], [28, 25, 23], decayFactor);
+            ctx.lineWidth = Math.max(2.0, len * 0.025);
+            ctx.stroke();
+
+            ctx.globalAlpha = 1.0;
+        }
+
+        function drawFallingLeaves() {
+            for (const leaf of state.fallingLeaves) {
+                ctx.save();
+                ctx.translate(leaf.x, leaf.y);
+                ctx.rotate(leaf.rot);
+                ctx.globalAlpha = leaf.opacity;
+
+                ctx.beginPath();
+                ctx.ellipse(0, 0, leaf.size, leaf.size * 0.4, 0, 0, Math.PI * 2);
+                ctx.fillStyle = '#4a3b32';
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        function updateEnvState() {
+            if (!document.getElementById('input-moisture').disabled) state.moisture = parseInt(document.getElementById('input-moisture').value);
+            if (!document.getElementById('input-light').disabled) state.light = parseInt(document.getElementById('input-light').value);
+            if (!document.getElementById('input-temp').disabled) state.temp = parseInt(document.getElementById('input-temp').value);
+            if (!document.getElementById('input-ph').disabled) state.ph = parseFloat(document.getElementById('input-ph').value);
+
+            document.getElementById('val-moisture').textContent = `${state.moisture}%`;
+            if (!document.getElementById('input-light').disabled) document.getElementById('val-light').textContent = `${state.light}%`;
+            if (!document.getElementById('input-temp').disabled) document.getElementById('val-temp').textContent = `${state.temp}°C`;
+            if (!document.getElementById('input-ph').disabled) document.getElementById('val-ph').textContent = `${state.ph} pH`;
+
+            evaluateHealthAndConditions();
+        }
+
+        function togglePlayPause() {
+            state.isPlaying = !state.isPlaying;
+            const icon = document.getElementById('icon-play-pause');
+            icon.className = state.isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+        }
+
+        function setSimSpeed(speed, btn) {
+            state.simSpeed = speed;
+            document.querySelectorAll('.speed-btn').forEach(b => {
+                b.className = 'speed-btn px-2 py-1 rounded text-slate-400 hover:text-white';
+            });
+            btn.className = 'speed-btn px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        }
+
+        function stepDay(count) {
+            if (state.isDead || state.isDying) return;
+            state.day = Math.min(100, state.day + count);
+            document.getElementById('day-counter-display').textContent = state.day.toFixed(1);
+            document.getElementById('timeline-slider').value = state.day;
+            updateProgressiveControls();
+            evaluateHealthAndConditions();
+        }
+
+        function jumpToDay(val) {
+            state.day = val;
+            document.getElementById('day-counter-display').textContent = state.day.toFixed(1);
+            updateProgressiveControls();
+            evaluateHealthAndConditions();
+        }
+
+        function adjustZoom(delta) {
+            state.zoom = Math.max(0.5, Math.min(2.5, state.zoom + delta));
+        }
+
+        function resetCamera() {
+            state.zoom = 1.0;
+            state.panX = 0;
+            state.panY = 0;
+        }
+
+        function resetEnvironment() {
+            state.moisture = plantSpec.optimalMoisture;
+            state.light = plantSpec.optimalLight;
+            state.temp = plantSpec.optimalTemp;
+            state.ph = plantSpec.optimalPH;
+
+            document.getElementById('input-moisture').value = state.moisture;
+            document.getElementById('input-light').value = state.light;
+            document.getElementById('input-temp').value = state.temp;
+            document.getElementById('input-ph').value = state.ph;
+
+            updateEnvState();
+        }
+
+        function addMoisture(amount) {
+            const moistureInput = document.getElementById('input-moisture');
+            const currentMoisture = parseInt(moistureInput.value, 10);
+            state.moisture = Math.min(Number(moistureInput.max), currentMoisture + amount);
+            moistureInput.value = state.moisture;
+            updateEnvState();
+        }
+
+        function actionWater() {
+            addMoisture(20);
+        }
+
+        function actionSun() {
+            if (document.getElementById('input-light').disabled) return;
+            state.light = Math.min(100, state.light + 20);
+            document.getElementById('input-light').value = state.light;
+            updateEnvState();
+        }
+
+        function actionMist() {
+            addMoisture(10);
+        }
+
+        function actionCalibratePH() {
+            if (document.getElementById('input-ph').disabled) return;
+            state.ph = plantSpec.optimalPH;
+            document.getElementById('input-ph').value = state.ph;
+            updateEnvState();
+        }
+
+        window.onload = function () {
+            resizeCanvas();
+            updateProgressiveControls();
+            updateEnvState();
+            lastTimestamp = performance.now();
+            requestAnimationFrame(simulationLoop);
+        };
+    </script>
+</body>
+
+</html>
